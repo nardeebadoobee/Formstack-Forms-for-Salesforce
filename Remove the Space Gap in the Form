@@ -1,0 +1,5 @@
+$('.ff-item-row').each(function() {  
+    if ($(this).is(':empty') || $(this).find(':not(:empty)').length === 0) {  
+        $(this).remove();
+    }  
+});

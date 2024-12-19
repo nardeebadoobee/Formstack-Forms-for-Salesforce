@@ -1,0 +1,11 @@
+const upsertFields = document.querySelectorAll('[data-isupsert="true"]');
+
+// Log each upsert field to the console
+if (upsertFields.length > 0) {
+    console.log("Fields using upsert:");
+    upsertFields.forEach((field, index) => {
+        console.log(`Field ${index + 1}:`, field);
+    });
+} else {
+    console.log("No fields are using upsert.");
+}

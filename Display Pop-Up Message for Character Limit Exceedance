@@ -1,0 +1,15 @@
+var last_valid_selection = null;
+
+function FF_OnAfterRender() {
+    document.getElementById("Opportunity.Description").addEventListener("change", function() {
+        if ($(this).val().length <= 12) {
+            var state=  $(this).val();
+        }
+        else {
+ alert("Please enter exactly 12 characters in this field");
+           $(this).val(last_valid_selection);
+        }
+    });
+}
+
+//Please change  the Opportunity.Description to the field API Name that you are using for the character counter

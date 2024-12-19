@@ -1,0 +1,6 @@
+function FF_OnAfterRender() { 
+ 
+ document.getElementsByClassName('signPadName')[1].setAttribute("height", "100");
+    document.getElementsByClassName('signPadName')[1].setAttribute("width", "420");
+ 
+}

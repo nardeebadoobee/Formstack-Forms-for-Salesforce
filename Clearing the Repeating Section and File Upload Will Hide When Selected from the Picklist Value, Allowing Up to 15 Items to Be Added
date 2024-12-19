@@ -1,0 +1,81 @@
+function FF_OnAfterRender() {
+    BindClickHandlers();
+}
+
+function ClearNewRepeatableSection(elem) {
+    const ignoreHiddenPicklists = 'select[data-ishidden="false"]';
+    console.log("Clearing Repeatable Section");
+
+    const newSection = $(elem).parents('.ff-sec-repeat-wrapper').next();
+
+    if (!newSection.length) {
+        console.error("New repeatable section not found.");
+        return false;
+    }
+
+    // Clear text inputs and textareas
+    newSection.find('input[type="textbox"]').val('');
+    newSection.find('textarea').val('');
+    newSection.find('span.ff-ext-selected').removeClass('ff-ext-selected');
+
+    // Clear picklists
+    const picklists = newSection.find(ignoreHiddenPicklists);
+    picklists.each(function () {
+        $(this).val(''); // Reset dropdown to default value
+        fs.EH.initFlexControl($(this)); // Reinitialize FlexControl
+    });
+
+    BindClickHandlers();
+    return true;
+}
+
+function BindClickHandlers() {
+    // Bind "add" button click handler
+    $('.ff-sec-repeat-wrapper a.ff-add').off('click').on('click', function () {
+        AddToRepeatableSection(this);
+        ClearNewRepeatableSection(this);
+    });
+
+    // Bind "remove" button click handler
+    $('.ff-sec-repeat-wrapper a.ff-remove').off('click').on('click', function () {
+        RemoveFromRepeatableSection(this);
+        BindClickHandlers(); // Re-bind handlers in case sections are reordered
+    });
+
+    // Handle dropdown change visibility toggle
+    const handleDropdownChange = (dropdownId, labelId, targetOption) => {
+        const dropdown = document.getElementById(dropdownId);
+        const labelElement = document.getElementById(labelId);
+
+        if (!dropdown || !labelElement) {
+            console.error(`Element not found for dropdownId: ${dropdownId} or labelId: ${labelId}`);
+            return;
+        }
+
+        dropdown.addEventListener('change', (event) => {
+            const selectedValue = event.target.value;
+            const labelParent = labelElement.parentNode.parentNode;
+
+            // Show or hide the label based on the selected value
+            if (selectedValue === targetOption) {
+                labelParent.style.display = 'block';
+            } else {
+                labelParent.style.display = 'none'; // Hide if it's not the target option or the default option
+            }
+
+            // Check if the selected value is the default option (empty value)
+            if (selectedValue === "") {
+                labelParent.style.display = 'none'; // Hide if the default value is selected
+            }
+        });
+    };
+
+    // Apply the dropdown handler to multiple dropdowns
+    for (let i = 1; i <= 15; i++) {
+        handleDropdownChange(
+            `Account.Owners__c.B_${i}_.Type_Of_Ownership__c`, // This can be changed to the API name according to the field you want to use inside the repeating sections.
+            `lblFileUpload974_${i}`,  //You can change the label of the 'file uploaded' in your file upload field by going to your hosted link, right-clicking the file upload, selecting 'Inspect Element,' and finding the ID or label of the file upload.
+            'Entity' //This is the value from the picklist, which you can also check in the HTML element which to be use for the file upload to show
+        );
+    }
+}
